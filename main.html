@@ -10,12 +10,14 @@
 body {
     display: flex;
     flex-direction: column;
+    min-width:100%;
+    max-width:100%;
     align-items: center;
     font-family: Arial, sans-serif;
     background-color: #FFFFFF;
     color: #333;
     margin:0;
-    padding:20px;
+    padding:0;
 }
 
 header {
@@ -56,7 +58,7 @@ button:hover {
 /* --- TABLE --- */
 table {
     width:100%;
-    max-width: 1000px;
+    max-width: 100%;
     border-collapse:collapse;
     margin-top:15px;
 }
@@ -228,7 +230,7 @@ const players = [
     {rank:1,name:"Lionel Messi",country:"Argentine",team:"PSG",category:"Attaquant",status:"Marié",info:"Attaquant légendaire",bio:"Messi est considéré comme l'un des meilleurs joueurs de tous les temps.",photo: "images/Lionel_Messi_201806.jpeg"},
     {rank:2,name:"Cristiano Ronaldo",country:"Portugal",team:"Al Nassr",category:"Attaquant",status:"Marié",info:"Attaquant puissant",bio:"Ronaldo est célèbre pour ses buts spectaculaires.",photo:"https://upload.wikimedia.org/wikipedia/commons/8/8c/Cristiano_Ronaldo_2018.jpg"},
     {rank:3,name:"Kylian Mbappé",country:"France",team:"PSG",category:"Attaquant",status:"Jeune",info:"Rapide et technique",bio:"Mbappé est connu pour sa vitesse fulgurante.",photo: "images/Kylian_Mbappe_2019.jpg"},
-    {rank:4,name:"Lamine Yamal",country:"Espagne",team:"Barcelona",category:"Attaquant",status:"Jeune",info:"Drible et technique",bio:"Lamine est connue pour ce drible.",photo: "images/meymar_jr.jpg"}
+    {rank:4,name:"Lamine Yamal",country:"Espagne",team:"Barcelona",category:"Attaquant",status:"Jeune",info:"Drible et technique",bio:"Lamine est connue pour ce drible.",photo: "https://cdn.resfu.com/media/img_news/imagen-de-lamine-yamal-en-el-partido-frente-al-betis--efe.jpg"}
 ];
 
 /* --- TABLE DISPLAY --- */

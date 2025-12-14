@@ -2,12 +2,17 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Bienvenue - Tark Hub</title>
+
 <style>
+/* --- BASE --- */
 body {
     margin:0;
-    height:100vh;
+    min-height:100vh;
     display:flex;
+    min-width:100%;
+    max-width:100%;
     justify-content:center;
     align-items:center;
     flex-direction:column;
@@ -15,74 +20,122 @@ body {
     color:#00ffcc;
     font-family:'Courier New', monospace;
     text-align:center;
-    overflow:hidden;
+    padding:0;
 }
+
 h1 {
-    font-size:60px;
-    margin-bottom:20px;
+    font-size:3.5rem;
+    margin-bottom:15px;
     animation: glow 1.5s infinite alternate;
 }
+
 @keyframes glow {
     from {text-shadow:0 0 10px #00ffcc;}
-    to {text-shadow:0 0 40px #00ffcc;}
+    to   {text-shadow:0 0 40px #00ffcc;}
 }
+
+p {
+    font-size:1.2rem;
+    margin-bottom:10px;
+}
+
 input {
     padding:12px;
-    font-size:18px;
-    border-radius:5px;
+    font-size:1.1rem;
+    border-radius:6px;
     border:none;
     margin-top:15px;
-    width:280px;
+    width:80%;
+    max-width:320px;
     text-align:center;
 }
+
 button {
-    padding:12px 25px;
-    font-size:18px;
+    padding:12px;
+    font-size:1.2rem;
     margin-top:15px;
     border:none;
     border-radius:5px;
     background-color:#00ffcc;
     cursor:pointer;
+    width:65%;
+    max-width:150px;
     transition:0.3s;
 }
+
 button:hover {
     background-color:#00cc99;
     color:#fff;
 }
+
 #error {
     color:#ff3333;
     margin-top:15px;
-    height:22px;
-    font-size:16px;
+    min-height:22px;
+    font-size:1rem;
 }
+
 .footer {
     position:absolute;
-    bottom:20px;
-    font-size:14px;
+    bottom:15px;
+    font-size:0.9rem;
     color:#00cc99;
+}
+
+/* --- RESPONSIVE --- */
+
+@media (max-width: 600px) {
+    h1 {
+        font-size:2.5rem;
+    }
+    p {
+        font-size:1rem;
+    }
+    input, button {
+        width:90%;
+        font-size:1rem;
+    }
+    .footer {
+        font-size:0.8rem;
+    }
+}
+
+@media (max-width: 400px) {
+    h1 {
+        font-size:2.2rem;
+    }
+    input, button {
+        width:100%;
+    }
 }
 </style>
 </head>
+
 <body>
+
 <h1>Tark Hub</h1>
 <p>Entrez le mot de passe pour continuer</p>
+
 <input type="password" id="passwordInput" placeholder="Mot de passe">
 <button onclick="checkPassword()">Entrer</button>
+
 <div id="error"></div>
+
 <div class="footer">© 2025 Tark Hub</div>
 
 <script>
 const correctPassword = "Tark";
 
 function checkPassword(){
-    const input = document.getElementById("passwordInput").value;
+    const input = document.getElementById("passwordInput").value.trim();
+
     if(input === correctPassword){
-        window.location.href = "main.html"; // redirection vers la page principale
+        window.location.href = "main.html";
     } else {
         document.getElementById("error").textContent = "Mot de passe incorrect !";
     }
 }
 </script>
+
 </body>
 </html>
-
