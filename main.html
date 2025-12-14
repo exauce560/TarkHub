@@ -4,32 +4,174 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Info Joueurs - Tark Hub</title>
-  <style>
-body { display: flex;flex-direction: column;align-items: center;font-family: Arial, sans-serif; background-color: #ffffff; color: #333; margin:0; padding:20px; }
-header { text-align:center; margin-bottom:20px; }
-h1 { font-size:36px; margin-bottom:5px; }
-p.instructions { font-size:16px; margin-bottom:20px; }
-input, button { width: 90%;max-width: 300px;padding:8px 12px; margin:5px; font-size:14px; cursor:pointer; }
-button { background-color:#87CEFA; border:none; border-radius:4px; }
-button:hover { background-color:#5EA0D9; color:#fff; }
-table { width:100%; border-collapse:collapse; margin-top:15px; }
-th, td { border:1px solid #aaa; padding:8px; text-align:left; }
-th { background-color:#eee; }
-.top10 { font-weight:bold; background-color:#f9f9a0; }
-#commands { display:none; position:fixed; top:100px; right:20px; background:#f0f8ff; padding:10px; border-radius:5px; width:180px; box-shadow:0 0 10px #aaa;}
-#commands h3 { margin-top:0; font-size:16px; }
-#commands button { width:100%; margin:3px 0; }
-.mini-page { width: 90%; max-width: 800px;display:none; position:fixed; top:50px; left:50%; transform:translateX(-50%); background:#f0f8ff; border:2px solid #87CEFA; padding:20px; border-radius:8px; max-height:80vh; overflow-y:auto; width:80%; z-index:100; box-shadow:0 0 15px #aaa; }
-.mini-page h2 { margin-top:0; }
-.closeMini { float:right; cursor:pointer; font-weight:bold; color:#333; }
-.player-hover { position:absolute; display:none; background:#ffffe0; border:1px solid #87CEFA; padding:10px; border-radius:5px; z-index:200; }
+
+<style>
+/* --- BASE --- */
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: Arial, sans-serif;
+    background-color: #FFFFFF;
+    color: #333;
+    margin:0;
+    padding:20px;
+}
+
+header {
+    text-align:center;
+    margin-bottom:20px;
+}
+
+h1 {
+    font-size:2.3rem;
+    margin-bottom:5px;
+}
+
+p.instructions {
+    font-size:1rem;
+    margin-bottom:20px;
+}
+
+input, button {
+    width: 95%;
+    max-width: 350px;
+    padding:10px 12px;
+    margin:5px;
+    font-size:1rem;
+    cursor:pointer;
+}
+
+button {
+    background-color:#87CEFA;
+    border:none;
+    border-radius:6px;
+}
+
+button:hover {
+    background-color:#5EA0D9;
+    color:#fff;
+}
+
+/* --- TABLE --- */
+table {
+    width:100%;
+    max-width: 1000px;
+    border-collapse:collapse;
+    margin-top:15px;
+}
+
+th, td {
+    border:1px solid #aaa;
+    padding:10px;
+    text-align:left;
+    font-size:0.9rem;
+}
+
+th {
+    background-color:#eee;
+}
+
+.top10 {
+    font-weight:bold;
+    background-color:#f9f9a0;
+}
+
+/* --- COMMANDS MENU --- */
+#commands {
+    display:none;
+    position:fixed;
+    top:80px;
+    right:15px;
+    background:#f0f8ff;
+    padding:10px;
+    border-radius:8px;
+    width:200px;
+    box-shadow:0 0 10px #aaa;
+    z-index:150;
+}
+
+#commands button {
+    width:100%;
+    margin:4px 0;
+}
+
+/* --- MINI-PAGES --- */
+.mini-page {
+    width:90%;
+    max-width: 700px;
+    display:none;
+    position:fixed;
+    top:50%;
+    left:50%;
+    transform:translate(-50%, -50%);
+    background:#f0f8ff;
+    border:2px solid #87CEFA;
+    padding:20px;
+    border-radius:8px;
+    max-height:80vh;
+    overflow-y:auto;
+    z-index:200;
+    box-shadow:0 0 15px #aaa;
+}
+
+.closeMini {
+    float:right;
+    cursor:pointer;
+    font-weight:bold;
+    color:#333;
+}
+
+/* --- PLAYER HOVER --- */
+.player-hover {
+    position:absolute;
+    display:none;
+    background:#ffffe0;
+    border:1px solid #87CEFA;
+    padding:10px;
+    border-radius:5px;
+    z-index:300;
+}
+
+/* --- RESPONSIVE --- */
+@media (max-width: 700px) {
+    h1 { font-size:1.8rem; }
+    th, td { font-size:0.8rem; padding:6px; }
+
+    table {
+        display:block;
+        overflow-x:auto;
+        white-space:nowrap;
+    }
+
+    #commands {
+        width:170px;
+        right:10px;
+        top:70px;
+    }
+}
+
+@media (max-width: 450px) {
+    input, button {
+        max-width:100%;
+        font-size:0.9rem;
+        padding:8px;
+    }
+
+    #commands {
+        position:fixed;
+        right:5px;
+        width:150px;
+    }
+}
 </style>
 </head>
+
 <body>
 
 <header>
-    <h1> Info joueur</h1>
-    <p class="instructions">Rechercher, filtrer et explorer les joueurs. Cliquez sur "Ouvrir Commandes" pour toutes les actions rapides.</p>
+    <h1>Info joueur</h1>
+    <p class="instructions">Rechercher, filtrer et explorer les joueurs. Cliquez sur "Ouvrir Commandes".</p>
     <button onclick="toggleCommands()">Ouvrir Commandes</button>
 </header>
 
@@ -52,29 +194,31 @@ th { background-color:#eee; }
     <tbody></tbody>
 </table>
 
+<!-- MENU COMMANDES -->
 <div id="commands">
-    <h3>Commandes Rapides</h3>
+    <h3>Commandes</h3>
     <button onclick="showTop10()">Top 10</button>
     <button onclick="filterCategory('Attaquant')">Attaquants</button>
     <button onclick="filterCategory('Milieu')">Milieu</button>
     <button onclick="filterCategory('Défenseur')">Défense</button>
     <button onclick="filterCategory('Gardien')">Gardien</button>
     <button onclick="filterTeam('PSG')">PSG</button>
-    <button onclick="filterTeam('Liverpool')">Liverpool</button>
+    <button onclick="filterTeam('Barcelona')">Barcelona</button>
     <button onclick="randomPlayer()">Joueur Aléatoire</button>
     <button onclick="toggleMini('miniInfo')">Info / Aide</button>
 </div>
 
+<!-- MINI PAGE -->
 <div id="miniInfo" class="mini-page">
     <span class="closeMini" onclick="toggleMini('miniInfo')">X</span>
     <h2>Comment utiliser l'application</h2>
     <ul>
         <li>Rechercher un joueur avec la barre de recherche.</li>
-        <li>Filtrer par catégorie, équipe ou statut avec les commandes.</li>
-        <li>Afficher le Top 10 avec le bouton correspondant.</li>
-        <li>Cliquez sur Joueur Aléatoire pour découvrir un joueur.</li>
-        <li>Survolez un joueur dans le tableau pour voir sa mini-biographie.</li>
+        <li>Filtrer par catégorie, équipe ou statut.</li>
+        <li>Afficher le Top 10.</li>
+        <li>Survoler un joueur pour voir la biographie.</li>
     </ul>
+    <a href="ex1.html" target="_blank">Info page</a>
 </div>
 
 <div id="playerHover" class="player-hover"></div>
@@ -82,14 +226,16 @@ th { background-color:#eee; }
 <script>
 const players = [
     {rank:1,name:"Lionel Messi",country:"Argentine",team:"PSG",category:"Attaquant",status:"Marié",info:"Attaquant légendaire",bio:"Messi est considéré comme l'un des meilleurs joueurs de tous les temps.",photo: "images/Lionel_Messi_201806.jpeg"},
-    {rank:2,name:"Cristiano Ronaldo",country:"Portugal",team:"Al Nassr",category:"Attaquant",status:"Marié",info:"Attaquant puissant",bio:"Ronaldo est célèbre pour ses buts spectaculaires et son physique incroyable.",photo:"https://upload.wikimedia.org/wikipedia/commons/8/8c/Cristiano_Ronaldo_2018.jpg"},
-    {rank:3,name:"Kylian Mbappé",country:"France",team:"PSG",category:"Attaquant",status:"Jeune",info:"Rapide et technique",bio:"Mbappé est connu pour sa vitesse fulgurante et sa technique.",photo: "images/Kylian_Mbappe_2019.jpg"}
-    // Ajoute plus de joueurs ici
+    {rank:2,name:"Cristiano Ronaldo",country:"Portugal",team:"Al Nassr",category:"Attaquant",status:"Marié",info:"Attaquant puissant",bio:"Ronaldo est célèbre pour ses buts spectaculaires.",photo:"https://upload.wikimedia.org/wikipedia/commons/8/8c/Cristiano_Ronaldo_2018.jpg"},
+    {rank:3,name:"Kylian Mbappé",country:"France",team:"PSG",category:"Attaquant",status:"Jeune",info:"Rapide et technique",bio:"Mbappé est connu pour sa vitesse fulgurante.",photo: "images/Kylian_Mbappe_2019.jpg"},
+    {rank:4,name:"Lamine Yamal",country:"Espagne",team:"Barcelona",category:"Attaquant",status:"Jeune",info:"Drible et technique",bio:"Lamine est connue pour ce drible.",photo: "images/meymar_jr.jpg"}
 ];
 
+/* --- TABLE DISPLAY --- */
 function displayPlayers(list) {
     const tbody = document.querySelector("#playerTable tbody");
     tbody.innerHTML = "";
+
     list.forEach(p=>{
         const tr = document.createElement("tr");
         if(p.rank<=10) tr.classList.add("top10");
@@ -103,15 +249,17 @@ function displayPlayers(list) {
             hover.style.left=(e.pageX+15)+'px';
             hover.innerHTML=`<strong>${p.name}</strong><br>${p.bio}<br><img src="${p.photo}" width="100">`;
         });
+
         tr.addEventListener('mouseleave', ()=>{
             document.getElementById('playerHover').style.display='none';
         });
     });
 }
 
+/* --- COMMANDS --- */
 function toggleCommands(){
     const commands = document.getElementById("commands");
-    commands.style.display = commands.style.display==="none"?"block":"none";
+    commands.style.display = (commands.style.display==="none" || commands.style.display==="") ? "block" : "none";
 }
 
 function filterCategory(cat) { displayPlayers(players.filter(p=>p.category===cat)); }
@@ -121,11 +269,11 @@ function showTop10() { displayPlayers(players.filter(p=>p.rank<=10)); }
 function searchPlayer(){
     const term=document.getElementById("searchInput").value.toLowerCase();
     displayPlayers(players.filter(p=>
-        p.name.toLowerCase().includes(term)||
-        p.country.toLowerCase().includes(term)||
-        p.team.toLowerCase().includes(term)||
-        p.category.toLowerCase().includes(term)||
-        p.status.toLowerCase().includes(term)||
+        p.name.toLowerCase().includes(term) ||
+        p.country.toLowerCase().includes(term) ||
+        p.team.toLowerCase().includes(term) ||
+        p.category.toLowerCase().includes(term) ||
+        p.status.toLowerCase().includes(term) ||
         p.info.toLowerCase().includes(term)
     ));
 }
@@ -137,7 +285,7 @@ function randomPlayer(){
 
 function toggleMini(id){
     const page = document.getElementById(id);
-    page.style.display = page.style.display==="none"?"block":"none";
+    page.style.display = page.style.display==="none" ? "block" : "none";
 }
 
 displayPlayers(players);
@@ -145,3 +293,4 @@ displayPlayers(players);
 
 </body>
 </html>
+
