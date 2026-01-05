@@ -2,303 +2,395 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tark Hub - Database Elite</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Tark Hub Pro - Mobile</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary: #00f2fe;
             --secondary: #4facfe;
-            --dark-bg: #0f172a;
-            --card-bg: #1e293b;
+            --dark-bg: #0b0f1a;
+            --card-bg: rgba(30, 41, 59, 0.7);
             --text-light: #f8fafc;
-            --accent: #fbbf24;
-            --attaquant: #ef4444;
-            --milieu: #10b981;
-            --defenseur: #3b82f6;
-            --gardien: #f59e0b;
+            --attaquant: #ff4757;
+            --milieu: #2ed573;
+            --defenseur: #1e90ff;
+            --gardien: #eccc68;
         }
 
-        * { box-sizing: border-box; transition: all 0.3s ease; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
         body {
             margin: 0;
             font-family: 'Poppins', sans-serif;
-            background-color: var(--dark-bg);
+            background: var(--dark-bg);
             color: var(--text-light);
-            background-image: radial-gradient(circle at top right, #1e293b, #0f172a);
-            min-height: 100vh;
+            background-attachment: fixed;
+            overflow-x: hidden;
         }
 
+        /* --- HEADER FIXE --- */
         header {
-            padding: 30px 20px;
-            text-align: center;
-            background: rgba(15, 23, 42, 0.9);
-            backdrop-filter: blur(15px);
-            border-bottom: 1px solid rgba(255,255,255,0.1);
             position: sticky;
             top: 0;
-            z-index: 100;
+            z-index: 1000;
+            background: rgba(11, 15, 26, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
         }
 
         h1 {
-            font-size: 2.5rem;
+            font-size: 1.4rem;
             margin: 0;
             background: linear-gradient(to right, var(--primary), var(--secondary));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             font-weight: 800;
-            text-transform: uppercase;
         }
 
-        .controls {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 10px;
-            padding: 15px;
-        }
-
-        .search-wrapper {
-            position: relative;
+        .search-box {
             width: 100%;
-            max-width: 600px;
-            margin-bottom: 10px;
+            position: relative;
         }
 
         #searchInput {
             width: 100%;
-            padding: 12px 20px;
-            border-radius: 15px;
-            border: 2px solid rgba(255,255,255,0.1);
-            background: var(--card-bg);
+            padding: 12px 45px 12px 20px;
+            border-radius: 25px;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.05);
             color: white;
+            font-size: 0.9rem;
             outline: none;
         }
 
-        .btn {
-            padding: 8px 18px;
-            border-radius: 10px;
-            border: none;
-            cursor: pointer;
-            font-weight: 600;
-            background: var(--card-bg);
-            color: white;
-            font-size: 0.9rem;
+        /* --- FILTRES SCROLLABLES (SUPER POUR MOBILE) --- */
+        .filter-scroll {
+            display: flex;
+            overflow-x: auto;
+            gap: 10px;
+            padding: 10px 0;
+            scrollbar-width: none; /* Firefox */
         }
 
-        .btn:hover { background: var(--secondary); transform: scale(1.05); }
-        .btn-active { background: var(--secondary); box-shadow: 0 0 10px var(--secondary); }
+        .filter-scroll::-webkit-scrollbar { display: none; } /* Chrome/Safari */
 
+        .f-btn {
+            white-space: nowrap;
+            padding: 8px 18px;
+            border-radius: 20px;
+            background: var(--card-bg);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: white;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .f-btn.active {
+            background: var(--secondary);
+            border-color: var(--primary);
+            box-shadow: 0 0 10px rgba(79, 172, 254, 0.5);
+        }
+
+        /* --- GRILLE DE CARTES --- */
         .player-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-            gap: 20px;
-            padding: 30px;
-            max-width: 1400px;
-            margin: 0 auto;
+            grid-template-columns: repeat(2, 1fr); /* 2 colonnes sur mobile */
+            gap: 12px;
+            padding: 15px;
         }
 
-        .player-card {
+        @media (min-width: 768px) {
+            .player-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+        }
+
+        .card {
             background: var(--card-bg);
             border-radius: 15px;
             overflow: hidden;
-            border: 1px solid rgba(255,255,255,0.05);
-            cursor: pointer;
-            animation: fadeIn 0.4s ease forwards;
-        }
-
-        .player-card:hover {
-            transform: translateY(-8px);
-            border-color: var(--primary);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
-        }
-
-        .card-header {
-            height: 180px;
             position: relative;
-            background: #2d3748;
+            border: 1px solid rgba(255,255,255,0.05);
+            animation: slideUp 0.4s ease-out;
         }
 
-        .player-img { width: 100%; height: 100%; object-fit: cover; }
-
-        .rank-badge {
-            position: absolute; top: 10px; left: 10px;
-            background: var(--accent); color: #000;
-            padding: 2px 10px; border-radius: 8px; font-weight: 800;
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        .card-body { padding: 15px; }
-        .player-name { font-size: 1.2rem; font-weight: 700; margin: 0; }
-        .player-team { color: var(--secondary); font-size: 0.85rem; margin-bottom: 10px; font-weight: 600; }
+        .card-img {
+            width: 100%;
+            height: 140px;
+            object-fit: cover;
+            background: #1a2235;
+        }
 
-        .cat-badge {
-            display: inline-block;
-            padding: 3px 10px;
-            border-radius: 6px;
-            font-size: 0.7rem;
+        .fav-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.5);
+            border: none;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            z-index: 10;
+        }
+
+        .fav-active { color: #ff4757; }
+
+        .card-info { padding: 10px; }
+
+        .c-name {
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .c-team {
+            font-size: 0.75rem;
+            color: var(--secondary);
+            margin-bottom: 8px;
+        }
+
+        .c-badge {
+            font-size: 0.65rem;
+            padding: 2px 8px;
+            border-radius: 4px;
             text-transform: uppercase;
-            font-weight: bold;
+            font-weight: 800;
+            display: inline-block;
         }
 
-        /* Modal */
+        /* --- MODAL MOBILE FULLSCREEN --- */
         .modal {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(8px);
-        }
-        .modal-content {
-            background: var(--card-bg); width: 90%; max-width: 500px; border-radius: 20px;
-            padding: 30px; text-align: center; position: relative;
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--dark-bg);
+            z-index: 2000;
+            overflow-y: auto;
+            padding-bottom: 40px;
         }
 
-        @keyframes fadeIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+        .modal-header {
+            position: relative;
+            height: 300px;
+        }
+
+        .modal-img { width: 100%; height: 100%; object-fit: cover; }
+
+        .close-modal {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(0,0,0,0.6);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            z-index: 100;
+        }
+
+        .modal-body {
+            padding: 20px;
+            background: var(--dark-bg);
+            border-radius: 30px 30px 0 0;
+            margin-top: -30px;
+            position: relative;
+        }
+
+        .stat-row {
+            margin-bottom: 15px;
+        }
+
+        .stat-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            margin-bottom: 5px;
+        }
+
+        .stat-bar-bg {
+            height: 8px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .stat-bar-fill {
+            height: 100%;
+            background: var(--primary);
+            width: 0;
+            transition: width 1s ease-in-out;
+        }
     </style>
 </head>
 <body>
 
 <header>
-    <h1>Tark Hub Player Database</h1>
-    <div class="controls">
-        <div class="search-wrapper">
-            <input type="text" id="searchInput" placeholder="Nom, Club, Pays ou Poste..." onkeyup="searchPlayer()">
-        </div>
+    <div class="header-top">
+        <h1>TARK HUB PRO</h1>
+        <div id="favCount" style="font-size: 0.8rem; background: var(--attaquant); padding: 2px 8px; border-radius: 10px;">0 ❤️</div>
     </div>
-    <div class="controls">
-        <button class="btn btn-active" onclick="filterBy('Tous', this)">Tous</button>
-        <button class="btn" onclick="filterBy('Attaquant', this)">Attaquants</button>
-        <button class="btn" onclick="filterBy('Milieu', this)">Milieux</button>
-        <button class="btn" onclick="filterBy('Défenseur', this)">Défenseurs</button>
-        <button class="btn" onclick="filterBy('Gardien', this)">Gardiens</button>
+
+    <div class="search-box">
+        <input type="text" id="searchInput" placeholder="Rechercher un joueur..." onkeyup="handleSearch()">
+    </div>
+
+    <div class="filter-scroll">
+        <button class="f-btn active" onclick="filterBy('Tous', this)">Tous</button>
+        <button class="f-btn" onclick="filterBy('Favoris', this)">Mes Favoris ❤️</button>
+        <button class="f-btn" onclick="filterBy('Attaquant', this)">Attaquants</button>
+        <button class="f-btn" onclick="filterBy('Milieu', this)">Milieux</button>
+        <button class="f-btn" onclick="filterBy('Défenseur', this)">Défenseurs</button>
+        <button class="f-btn" onclick="filterBy('Gardien', this)">Gardiens</button>
     </div>
 </header>
 
 <div class="player-grid" id="playerGrid"></div>
 
-<div id="playerModal" class="modal" onclick="closeModal()">
-    <div class="modal-content" onclick="event.stopPropagation()">
-        <div id="modalData"></div>
-        <br>
-        <button class="btn" style="background:var(--attaquant)" onclick="closeModal()">Fermer</button>
-    </div>
+<div id="pModal" class="modal">
+    <button class="close-modal" onclick="closeModal()">×</button>
+    <div id="modalContent"></div>
 </div>
 
 <script>
+// --- BASE DE DONNÉES MASSIVE (Stats sur 100) ---
 const players = [
-    // ATTAQUANTS
-    {rank:1, name:"Lionel Messi", country:"Argentine", team:"Inter Miami", category:"Attaquant", status:"GOAT", info:"8 Ballons d'Or", bio:"Légende absolue du football mondial.", photo: "https://fcb-abbrevia.s3.amazonaws.com/img/stats/players/MESSI.jpg"},
-    {rank:2, name:"Cristiano Ronaldo", country:"Portugal", team:"Al Nassr", category:"Attaquant", status:"Légende", info:"Meilleur buteur de l'histoire", bio:"Une détermination hors du commun.", photo:"https://upload.wikimedia.org/wikipedia/commons/8/8c/Cristiano_Ronaldo_2018.jpg"},
-    {rank:3, name:"Kylian Mbappé", country:"France", team:"Real Madrid", category:"Attaquant", status:"Elite", info:"Champion du Monde 2018", bio:"La vitesse pure alliée à la technique.", photo: "https://img.resfu.com/media/img_news/kylian-mbappe--real-madrid.png"},
-    {rank:4, name:"Erling Haaland", country:"Norvège", team:"Man City", category:"Attaquant", status:"Cyborg", info:"Machine à buts", bio:"Puissance physique et finition clinique.", photo: "https://www.fifarosters.com/assets/img/players/fifa24/dynamic/239085.png"},
-    {rank:9, name:"Vinícius Júnior", country:"Brésil", team:"Real Madrid", category:"Attaquant", status:"Star", info:"Dribbleur fou", bio:"Le dynamiteur du flanc gauche madrilène.", photo: "https://static.flashscore.com/res/image/data/YmREpEhl-jHzM84lC.png"},
-    {rank:10, name:"Lamine Yamal", country:"Espagne", team:"Barcelona", category:"Attaquant", status:"Prodige", info:"Plus jeune buteur Euro", bio:"Le nouveau diamant de la Masia.", photo: "https://img.a.transfermarkt.technology/portrait/header/926856-1715589088.jpg?lm=1"},
-    {rank:11, name:"Mohamed Salah", country:"Égypte", team:"Liverpool", category:"Attaquant", status:"Roi", info:"Meilleur buteur africain PL", bio:"Le pharaon de Anfield Road.", photo: "https://www.fifarosters.com/assets/img/players/fifa23/dynamic/209331.png"},
-    {rank:13, name:"Harry Kane", country:"Angleterre", team:"Bayern Munich", category:"Attaquant", status:"Elite", info:"Buteur complet", bio:"Le capitaine des Three Lions.", photo: "https://www.fifarosters.com/assets/img/players/fifa24/dynamic/202126.png"},
-    {rank:15, name:"Robert Lewandowski", country:"Pologne", team:"Barcelona", category:"Attaquant", status:"Vétéran", info:"Soulier d'Or", bio:"L'un des meilleurs numéros 9 de la décennie.", photo: "https://www.fifarosters.com/assets/img/players/fifa24/dynamic/188545.png"},
-    {rank:21, name:"Lautaro Martínez", country:"Argentine", team:"Inter Milan", category:"Attaquant", status:"Capitaine", info:"Champion du Monde", bio:"Le leader de l'attaque des Nerazzurri.", photo: "https://www.fifarosters.com/assets/img/players/fifa24/dynamic/231478.png"},
-
-    // MILIEUX
-    {rank:5, name:"Kevin De Bruyne", country:"Belgique", team:"Man City", category:"Milieu", status:"Maestro", info:"Vision de jeu", bio:"Le meilleur passeur de Premier League.", photo: "https://www.fifarosters.com/assets/img/players/fifa23/dynamic/192985.png"},
-    {rank:6, name:"Jude Bellingham", country:"Angleterre", team:"Real Madrid", category:"Milieu", status:"Golden Boy", info:"Impact box-to-box", bio:"Déjà patron du milieu à 20 ans.", photo: "https://img.as.com/resizer/v2/LALIGA-JUDE-BELLINGHAM-667990b769288102d1a37651086a9f4c.png?auth=509923880e66c6114e9514739110d7a04944883313d5a42095d35967733df64e&width=644&height=362&smart=true"},
-    {rank:12, name:"Antoine Griezmann", country:"France", team:"Atlético", category:"Milieu", status:"Cerveau", info:"QI Foot supérieur", bio:"Indispensable tactiquement.", photo: "https://img.resfu.com/media/img_news/afp_en_76046779366579040375080004550785002061266204.jpg"},
-    {rank:14, name:"Rodri", country:"Espagne", team:"Man City", category:"Milieu", status:"Pilier", info:"Ballon d'Or 2024", bio:"Le métronome du football mondial.", photo: "https://www.fifarosters.com/assets/img/players/fifa24/dynamic/231866.png"},
-    {rank:18, name:"Pedri", country:"Espagne", team:"Barcelona", category:"Milieu", status:"Magicien", info:"Technique pure", bio:"L'héritier d'Iniesta.", photo: "https://www.fifarosters.com/assets/img/players/fifa24/dynamic/251854.png"},
-    {rank:22, name:"Bernardo Silva", country:"Portugal", team:"Man City", category:"Milieu", status:"Technicien", info:"Infatigable", bio:"Le couteau suisse de Pep Guardiola.", photo: "https://www.fifarosters.com/assets/img/players/fifa24/dynamic/218667.png"},
-    {rank:25, name:"Jamal Musiala", country:"Allemagne", team:"Bayern Munich", category:"Milieu", status:"Dribbleur", info:"Magic Musiala", bio:"Le futur meneur de la Mannschaft.", photo: "https://www.fifarosters.com/assets/img/players/fifa24/dynamic/256630.png"},
-    {rank:26, name:"Bruno Fernandes", country:"Portugal", team:"Man Utd", category:"Milieu", status:"Capitaine", info:"Créateur d'occasions", bio:"Le moteur offensif de United.", photo: "https://www.fifarosters.com/assets/img/players/fifa24/dynamic/212198.png"},
-
-    // DEFENSEURS
-    {rank:7, name:"Virgil Van Dijk", country:"Pays-Bas", team:"Liverpool", category:"Défenseur", status:"Mur", info:"Leader vocal", bio:"Calme, puissance et relance.", photo: "https://www.fifarosters.com/assets/img/players/fifa23/dynamic/203376.png"},
-    {rank:16, name:"Ruben Dias", country:"Portugal", team:"Man City", category:"Défenseur", status:"Guerrier", info:"Solidité", bio:"Le patron de la défense des Citizens.", photo: "https://www.fifarosters.com/assets/img/players/fifa24/dynamic/239818.png"},
-    {rank:19, name:"Alphonso Davies", country:"Canada", team:"Bayern Munich", category:"Défenseur", status:"Flash", info:"Vitesse extrême", bio:"Le latéral gauche le plus rapide.", photo: "https://www.fifarosters.com/assets/img/players/fifa24/dynamic/234396.png"},
-    {rank:23, name:"Theo Hernandez", country:"France", team:"AC Milan", category:"Défenseur", status:"TGV", info:"Offensif", bio:"Une force de la nature sur son côté gauche.", photo: "https://www.fifarosters.com/assets/img/players/fifa24/dynamic/232656.png"},
-    {rank:24, name:"Achraf Hakimi", country:"Maroc", team:"PSG", category:"Défenseur", status:"Star", info:"Endurance", bio:"L'un des meilleurs latéraux droits du monde.", photo: "https://www.fifarosters.com/assets/img/players/fifa24/dynamic/235212.png"},
-    {rank:28, name:"Antonio Rüdiger", country:"Allemagne", team:"Real Madrid", category:"Défenseur", status:"Fou", info:"Aggressivité", bio:"Le cauchemar des attaquants.", photo: "https://www.fifarosters.com/assets/img/players/fifa24/dynamic/205452.png"},
-
-    // GARDIENS
-    {rank:8, name:"Thibaut Courtois", country:"Belgique", team:"Real Madrid", category:"Gardien", status:"Muraille", info:"Décisif", bio:"Impérial sur sa ligne.", photo: "https://players.fcbarcelona.com/images/public/p-20011.png"},
-    {rank:17, name:"Alisson Becker", country:"Brésil", team:"Liverpool", category:"Gardien", status:"Calme", info:"Jeu au pied", bio:"La sécurité incarnée.", photo: "https://www.fifarosters.com/assets/img/players/fifa24/dynamic/212831.png"},
-    {rank:20, name:"Marc-André ter Stegen", country:"Allemagne", team:"Barcelona", category:"Gardien", status:"Mur", info:"Relance précise", bio:"Le gardien moderne par excellence.", photo: "https://www.fifarosters.com/assets/img/players/fifa24/dynamic/192448.png"},
-    {rank:27, name:"Mike Maignan", country:"France", team:"AC Milan", category:"Gardien", status:"Magic Mike", info:"Réflexes", bio:"Le successeur de Lloris chez les Bleus.", photo: "https://www.fifarosters.com/assets/img/players/fifa24/dynamic/215698.png"},
-    {rank:30, name:"Emiliano Martínez", country:"Argentine", team:"Aston Villa", category:"Gardien", status:"Dibu", info:"Champion du Monde", bio:"Le héros des tirs au but argentins.", photo: "https://www.fifarosters.com/assets/img/players/fifa24/dynamic/202857.png"}
+    {id:1, rank:1, name:"Lionel Messi", team:"Inter Miami", cat:"Attaquant", photo:"https://fcb-abbrevia.s3.amazonaws.com/img/stats/players/MESSI.jpg", pace:80, shoot:87, pass:90, dri:94, bio:"Le génie argentin, maître du drible et de la vision."},
+    {id:2, rank:2, name:"Cristiano Ronaldo", team:"Al Nassr", cat:"Attaquant", photo:"https://upload.wikimedia.org/wikipedia/commons/8/8c/Cristiano_Ronaldo_2018.jpg", pace:82, shoot:92, pass:78, dri:80, bio:"La légende portugaise, meilleur buteur de l'histoire."},
+    {id:3, rank:3, name:"Kylian Mbappé", team:"Real Madrid", cat:"Attaquant", photo:"https://img.resfu.com/media/img_news/kylian-mbappe--real-madrid.png", pace:97, shoot:90, pass:80, dri:92, bio:"La foudre française, futur du football mondial."},
+    {id:4, rank:4, name:"Erling Haaland", team:"Man City", cat:"Attaquant", photo:"https://www.fifarosters.com/assets/img/players/fifa24/dynamic/239085.png", pace:89, shoot:93, pass:66, dri:80, bio:"Le cyborg norvégien, machine à marquer."},
+    {id:5, rank:5, name:"Jude Bellingham", team:"Real Madrid", cat:"Milieu", photo:"https://img.as.com/resizer/v2/LALIGA-JUDE-BELLINGHAM-667990b769288102d1a37651086a9f4c.png?auth=509923880e66c6114e9514739110d7a04944883313d5a42095d35967733df64e&width=644&height=362&smart=true", pace:79, shoot:82, pass:85, dri:88, bio:"Le nouveau patron du milieu de terrain madrilène."},
+    {id:6, rank:6, name:"Vinícius Júnior", team:"Real Madrid", cat:"Attaquant", photo:"https://static.flashscore.com/res/image/data/YmREpEhl-jHzM84lC.png", pace:95, shoot:82, pass:78, dri:91, bio:"Dribbleur explosif et décisif."},
+    {id:7, rank:7, name:"Kevin De Bruyne", team:"Man City", cat:"Milieu", photo:"https://www.fifarosters.com/assets/img/players/fifa23/dynamic/192985.png", pace:72, shoot:85, pass:94, dri:87, bio:"Maestro absolu de la passe décisive."},
+    {id:8, rank:8, name:"Virgil Van Dijk", team:"Liverpool", cat:"Défenseur", photo:"https://www.fifarosters.com/assets/img/players/fifa23/dynamic/203376.png", pace:78, shoot:60, pass:71, dri:72, bio:"Le mur infranchissable des Reds."},
+    {id:9, rank:9, name:"Lamine Yamal", team:"Barcelona", cat:"Attaquant", photo:"https://img.a.transfermarkt.technology/portrait/header/926856-1715589088.jpg?lm=1", pace:85, shoot:78, pass:80, dri:89, bio:"Le plus grand prodige de 17 ans au monde."},
+    {id:10, rank:10, name:"Thibaut Courtois", team:"Real Madrid", cat:"Gardien", photo:"https://players.fcbarcelona.com/images/public/p-20011.png", pace:50, shoot:20, pass:75, dri:60, bio:"La muraille de Belgique."},
+    {id:11, rank:11, name:"Mohamed Salah", team:"Liverpool", cat:"Attaquant", photo:"https://www.fifarosters.com/assets/img/players/fifa23/dynamic/209331.png", pace:89, shoot:87, pass:81, dri:88, bio:"Le roi égyptien d'Anfield."},
+    {id:12, rank:12, name:"Rodri", team:"Man City", cat:"Milieu", photo:"https://www.fifarosters.com/assets/img/players/fifa24/dynamic/231866.png", pace:66, shoot:80, pass:86, dri:84, bio:"Vainqueur du Ballon d'Or 2024."}
 ];
 
+let favorites = JSON.parse(localStorage.getItem('tark_favs')) || [];
+
 function getCatColor(cat) {
-    switch(cat) {
-        case 'Attaquant': return 'var(--attaquant)';
-        case 'Milieu': return 'var(--milieu)';
-        case 'Défenseur': return 'var(--defenseur)';
-        case 'Gardien': return 'var(--gardien)';
-        default: return 'var(--secondary)';
-    }
+    const colors = { 'Attaquant': 'var(--attaquant)', 'Milieu': 'var(--milieu)', 'Défenseur': 'var(--defenseur)', 'Gardien': 'var(--gardien)' };
+    return colors[cat] || 'gray';
 }
 
 function displayPlayers(list) {
     const grid = document.getElementById("playerGrid");
     grid.innerHTML = "";
-    list.sort((a,b) => a.rank - b.rank);
 
     list.forEach(p => {
+        const isFav = favorites.includes(p.id);
         const card = document.createElement("div");
-        card.className = "player-card";
-        card.onclick = () => showPlayerDetails(p);
-
+        card.className = "card";
         card.innerHTML = `
-            <div class="card-header">
-                <span class="rank-badge">#${p.rank}</span>
-                <img src="${p.photo}" class="player-img" alt="${p.name}" onerror="this.src='https://via.placeholder.com/300x200?text=Player'">
-            </div>
-            <div class="card-body">
-                <h3 class="player-name">${p.name}</h3>
-                <div class="player-team">${p.team}</div>
-                <div class="cat-badge" style="background:${getCatColor(p.category)}">${p.category}</div>
+            <button class="fav-btn ${isFav ? 'fav-active' : ''}" onclick="toggleFav(event, ${p.id})">${isFav ? '❤️' : '🤍'}</button>
+            <img src="${p.photo}" class="card-img" onclick="openPlayer(${p.id})" onerror="this.src='https://via.placeholder.com/150'">
+            <div class="card-info" onclick="openPlayer(${p.id})">
+                <p class="c-name">${p.name}</p>
+                <p class="c-team">${p.team}</p>
+                <span class="c-badge" style="background:${getCatColor(p.cat)}">${p.cat}</span>
             </div>
         `;
         grid.appendChild(card);
     });
+    document.getElementById('favCount').innerText = `${favorites.length} ❤️`;
 }
 
-function searchPlayer(){
+// --- LOGIQUE RECHERCHE ET FILTRES ---
+function handleSearch() {
     const term = document.getElementById("searchInput").value.toLowerCase();
-    const filtered = players.filter(p =>
-        p.name.toLowerCase().includes(term) ||
-        p.team.toLowerCase().includes(term) ||
-        p.country.toLowerCase().includes(term) ||
-        p.category.toLowerCase().includes(term)
-    );
+    const filtered = players.filter(p => p.name.toLowerCase().includes(term) || p.team.toLowerCase().includes(term));
     displayPlayers(filtered);
 }
 
 function filterBy(cat, btn) {
-    document.querySelectorAll('.btn').forEach(b => b.classList.remove('btn-active'));
-    btn.classList.add('btn-active');
+    document.querySelectorAll('.f-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
 
-    if(cat === 'Tous') {
-        displayPlayers(players);
-    } else {
-        displayPlayers(players.filter(p => p.category === cat));
-    }
+    if(cat === 'Tous') displayPlayers(players);
+    else if(cat === 'Favoris') displayPlayers(players.filter(p => favorites.includes(p.id)));
+    else displayPlayers(players.filter(p => p.cat === cat));
 }
 
-function showPlayerDetails(p) {
-    const modal = document.getElementById("playerModal");
-    const content = document.getElementById("modalData");
+// --- GESTION FAVORIS ---
+function toggleFav(e, id) {
+    e.stopPropagation();
+    if(favorites.includes(id)) {
+        favorites = favorites.filter(fid => fid !== id);
+    } else {
+        favorites.push(id);
+    }
+    localStorage.setItem('tark_favs', JSON.stringify(favorites));
+    displayPlayers(players);
+}
+
+// --- MODAL DÉTAILLÉE ---
+function openPlayer(id) {
+    const p = players.find(player => player.id === id);
+    const modal = document.getElementById("pModal");
+    const content = document.getElementById("modalContent");
+
     content.innerHTML = `
-        <img src="${p.photo}" style="width:120px; height:120px; border-radius:50%; object-fit:cover; border:4px solid ${getCatColor(p.category)};">
-        <h2 style="margin:10px 0;">${p.name}</h2>
-        <p style="color:var(--secondary); font-weight:bold;">${p.team} | ${p.country}</p>
-        <p style="font-size:0.9rem; line-height:1.5; opacity:0.9;">${p.bio}</p>
-        <div style="background:rgba(255,255,255,0.05); padding:10px; border-radius:10px; font-size:0.8rem;">
-            <strong>Fait marquant :</strong> ${p.info}<br>
-            <strong>Poste :</strong> ${p.category}
+        <div class="modal-header">
+            <img src="${p.photo}" class="modal-img">
+        </div>
+        <div class="modal-body">
+            <h2 style="margin:0">${p.name}</h2>
+            <p style="color:var(--secondary); font-weight:600;">${p.team} | ${p.cat}</p>
+            <p style="font-size:0.9rem; opacity:0.8;">${p.bio}</p>
+
+            <h3 style="font-size:1rem; margin-top:25px;">Statistiques Clés</h3>
+            ${renderStat("Vitesse", p.pace)}
+            ${renderStat("Tir", p.shoot)}
+            ${renderStat("Passe", p.pass)}
+            ${renderStat("Dribble", p.dri)}
         </div>
     `;
-    modal.style.display = "flex";
+    modal.style.display = "block";
+
+    // Animation des barres
+    setTimeout(() => {
+        document.querySelectorAll('.stat-bar-fill').forEach(bar => {
+            bar.style.width = bar.getAttribute('data-val') + '%';
+        });
+    }, 100);
 }
 
-function closeModal() {
-    document.getElementById("playerModal").style.display = "none";
+function renderStat(label, val) {
+    return `
+        <div class="stat-row">
+            <div class="stat-label"><span>${label}</span><span>${val}</span></div>
+            <div class="stat-bar-bg"><div class="stat-bar-fill" data-val="${val}"></div></div>
+        </div>
+    `;
 }
 
+function closeModal() { document.getElementById("pModal").style.display = "none"; }
+
+// Init
 displayPlayers(players);
 </script>
 
