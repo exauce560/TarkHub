@@ -166,7 +166,7 @@
     <div id="draftResult" class="player-grid" style="width: 100%"></div>
     <button class="fab" style="position: static; margin-top: 20px;" onclick="app.closeDraft()">FERMER</button>
 </div>
-
+   
 <script>
 const app = {
     players: [
@@ -181,7 +181,7 @@ const app = {
         {id:9, name:"Mike Maignan", team:"AC Milan", cat:"Gardien", foot:"Droit", photo:"https://www.lequipe.fr/_medias/img-photo-jpg/mike-maignan-va-se-soigner-a-milan-f-faugere-l-equipe/1500000001703156/0:0,1996:1331-828-552-75/d9a66.jpg", s:{vit:55, tir:30, pas:80, dri:62}},
         {id:10, name:"Achraf Hakimi", team:"PSG", cat:"Défenseur", foot:"Droit", photo:"https://tse1.mm.bing.net/th/id/OIP.YhCFGcXzKv0pXBlMUDJzyQHaEK?rs=1&pid=ImgDetMain&o=7&rm=3", s:{vit:94, tir:76, pas:81, dri:85}},
         {id:11, name:"Vinícius Júnior", team:"Real Madrid", cat:"Attaquant", foot:"Droit", photo:"https://tse2.mm.bing.net/th/id/OIP.Sf_cu9VJEOivLHoxm4jYZAHaEK?rs=1&pid=ImgDetMain&o=7&rm=3", s:{vit:96, tir:83, pas:79, dri:92}},
-        {id:12, name:"Jamal Musiala", team:"Bayern Munich", cat:"Milieu", foot:"Droit", photo:"https://fcbinside.de/wp-content/uploads/2020/09/fbl-ger-bundesliga-bayern-munich-schalke-1-scaled.jpg", s:{vit:86, tir:80, pas:81, dri:92}}
+        {id:12, name:"Jamal Musiala", team:"Bayern Munich", cat:"Milieu", foot:"Droit", photo:"https://fcbinside.de/wp-content/uploads/2020/09/fbl-ger-bundesliga-bayern-munich-schalke-1-scaled.jpg", s:{vit:86, tir:80, pas:81, dri:92}},
         {id:13, name:"Mohamed Salah", team:"Liverpool", cat:"Attaquant", foot:"Gauche", photo:"https://tse3.mm.bing.net/th/id/OIP.S3q_r78_S7fK7-YV_Cg-vQHaEK?rs=1&pid=ImgDetMain", s:{vit:89, tir:87, pas:82, dri:88}},
         {id:14, name:"Bernardo Silva", team:"Man City", cat:"Milieu", foot:"Gauche", photo:"https://tse2.mm.bing.net/th/id/OIP.vH_H-y9K_E0_kG7zQv6-vQHaEK?rs=1&pid=ImgDetMain", s:{vit:69, tir:78, pas:86, dri:92}},
         {id:15, name:"Antoine Griezmann", team:"Atlético Madrid", cat:"Attaquant", foot:"Gauche", photo:"https://tse1.mm.bing.net/th/id/OIP.p7q_v78_S7fK7-YV_Cg-vQHaEK?rs=1&pid=ImgDetMain", s:{vit:76, tir:85, pas:89, dri:86}},
@@ -192,6 +192,7 @@ const app = {
         {id:20, name:"Florian Wirtz", team:"Bayer Leverkusen", cat:"Milieu", foot:"Droit", photo:"https://tse2.mm.bing.net/th/id/OIP.m1q_v78_S7fK7-YV_Cg-vQHaEK?rs=1&pid=ImgDetMain", s:{vit:81, tir:78, pas:87, dri:89}},
         {id:21, name:"Alphonso Davies", team:"Bayern Munich", cat:"Défenseur", foot:"Gauche", photo:"https://tse4.mm.bing.net/th/id/OIP.n2q_v78_S7fK7-YV_Cg-vQHaEK?rs=1&pid=ImgDetMain", s:{vit:96, tir:68, pas:77, dri:84}},
         {id:22, name:"Harry Kane", team:"Bayern Munich", cat:"Attaquant", foot:"Droit", photo:"https://tse1.mm.bing.net/th/id/OIP.b3q_v78_S7fK7-YV_Cg-vQHaEK?rs=1&pid=ImgDetMain", s:{vit:69, tir:93, pas:84, dri:83}}
+        
     ],
     currentCat: 'Tous',
 
@@ -200,17 +201,33 @@ const app = {
     },
 
     render(data, target = "grid") {
+        const colors = {
+            'Attaquant': '#ff4757',
+            'Milieu': '#2ed573',
+            'Défenseur': '#1e90ff',
+            'Gardien': '#ffa502'
+        };
+        
         const container = document.getElementById(target);
-        container.innerHTML = data.map(p => `
-            <div class="player-card" onclick="app.open(${p.id})">
-                <img src="${p.photo}" loading="lazy">
-                <div class="card-content">
-                    <p class="p-name">${p.name}</p>
-                    <p class="p-team">${p.team}</p>
-                    <span style="font-size:0.7rem; color:var(--primary)">${p.cat}</span>
+    
+        // 2. On génère le HTML pour chaque joueur
+        container.innerHTML = data.map(p => {
+            // On récupère la couleur selon la catégorie (ex: 'Attaquant' -> '#ff4757')
+            const catColor = colors[p.cat] || 'var(--primary)';
+
+            return `
+                <div class="player-card" onclick="app.open(${p.id})">
+                    <img src="${p.photo}" loading="lazy">
+                    <div class="card-content">
+                        <p class="p-name">${p.name}</p>
+                        <p class="p-team">${p.team}</p>
+                    
+                        <span style="font-size:0.7rem; color:${catColor}; font-weight:bold">${p.cat}</span>
+                    
+                    </div>
                 </div>
-            </div>
-        `).join('');
+            `;
+        }).join('');
     },
 
     filter() {
@@ -231,6 +248,9 @@ const app = {
 
     open(id) {
         const p = this.players.find(x => x.id === id);
+        // On récupère la couleur ici aussi
+        const colors = { 'Attaquant': '#ff4757', 'Milieu': '#2ed573', 'Défenseur': '#1e90ff', 'Gardien': '#ffa502' };
+        const catColor = colors[p.cat] || 'var(--primary)';
         document.getElementById('mName').innerText = p.name;
         document.getElementById('mBody').innerHTML = `
             <img src="${p.photo}" style="width:100%; height:250px; object-fit:cover; border-radius:20px;">
